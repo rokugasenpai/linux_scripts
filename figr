@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# find grep
+# Usage: figr [[dir_path] file_pattern] search_regex
+
+search_regex=''
+file_pattern='*'
+dir_path='.'
+
+if [ $# -eq 1 ]; then
+    search_regex=$1
+elif [ $# -eq 2 ]; then
+    file_pattern=$1
+    search_regex=$2
+elif [ $# -eq 3 ]; then
+    dir_path=$1
+    file_pattern=$2
+    search_regex=$3
+else
+    echo 'Invalid parameters: Usage: figr [[dir_path] file_pattern] search_regex' >&2
+    exit 1
+fi
+
+find ${dir_path} -name "${file_pattern}" -print | xargs grep -E ${search_regex}

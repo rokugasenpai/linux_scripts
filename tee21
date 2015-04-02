@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# 2>&1 tee
+# Usage: tee21 [option] command file_path
+
+option=''
+command=''
+file_path=''
+
+if [ $# -eq 2 ]; then
+    command=$1
+    file_path=$2
+elif [ $# -eq 3 ]; then
+    option=$1
+    command=$2
+    file_path=$3
+else
+    echo 'Invalid parameters: Usage: tee21 [option] command file_path' >&2
+    exit 1
+fi
+
+${command} 2>&1 | tee ${option} "${file_path}"

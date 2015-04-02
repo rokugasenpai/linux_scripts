@@ -1,0 +1,181 @@
+#!/bin/bash
+
+# recursive chown chmod
+# Usage(random order, at least 1 parameter): rch dir_path owner file_permission
+
+f_perm=644
+d_perm=755
+owner=`id -un`
+d_path='.'
+
+# perms
+if [ $# -eq 1 ] && [[ $1 =~ [0-9]{3} ]]; then
+    f_perm=$1
+    if [ $1 = '000' ]; then
+        d_perm='000'
+    elif [ `expr $1 % 100` -eq 0 ]; then
+        d_perm=`expr $1 + 100`
+    elif [ `expr $1 % 10` -eq 0 ]; then
+        d_perm=`expr $1 + 110`
+    else
+        d_perm=`expr $1 + 111`
+    fi
+# dpath
+elif [ $# -eq 1 ] && [ -d $1 ]; then
+    d_path=$1
+# owner
+elif [ $# -eq 1 ]; then
+    owner=$1
+# perms dpath
+elif [ $# -eq 2 ] && [[ $1 =~ [0-9]{3} ]] && [ -d $2 ]; then
+    f_perm=$1
+    d_path=$2
+    if [ $1 = '000' ]; then
+        d_perm='000'
+    elif [ `expr $1 % 100` -eq 0 ]; then
+        d_perm=`expr $1 + 100`
+    elif [ `expr $1 % 10` -eq 0 ]; then
+        d_perm=`expr $1 + 110`
+    else
+        d_perm=`expr $1 + 111`
+    fi
+# perms owner
+elif [ $# -eq 2 ] && [[ $1 =~ [0-9]{3} ]]; then
+    f_perm=$1
+    owner=$2
+    if [ $1 = '000' ]; then
+        d_perm='000'
+    elif [ `expr $1 % 100` -eq 0 ]; then
+        d_perm=`expr $1 + 100`
+    elif [ `expr $1 % 10` -eq 0 ]; then
+        d_perm=`expr $1 + 110`
+    else
+        d_perm=`expr $1 + 111`
+    fi
+# dpath perms
+elif [ $# -eq 2 ] && [ -d $1 ] && [[ $2 =~ [0-9]{3} ]]; then
+    d_path=$1
+    f_perm=$2
+    if [ $2 = '000' ]; then
+        d_perm='000'
+    elif [ `expr $2 % 100` -eq 0 ]; then
+        d_perm=`expr $2 + 100`
+    elif [ `expr $2 % 10` -eq 0 ]; then
+        d_perm=`expr $2 + 110`
+    else
+        d_perm=`expr $2 + 111`
+    fi
+# dpath owner
+elif [ $# -eq 2 ] && [ -d $1 ]; then
+    d_path=$1
+    owner=$2
+# owner perms
+elif [ $# -eq 2 ] && [[ $2 =~ [0-9]{3} ]]; then
+    owner=$1
+    f_perm=$2
+    if [ $2 = '000' ]; then
+        d_perm='000'
+    elif [ `expr $2 % 100` -eq 0 ]; then
+        d_perm=`expr $2 + 100`
+    elif [ `expr $2 % 10` -eq 0 ]; then
+        d_perm=`expr $2 + 110`
+    else
+        d_perm=`expr $2 + 111`
+    fi
+# owner dpath
+elif [ $# -eq 2 ] && [ -d $2 ]; then
+    owner=$1
+    d_path=$2
+# perms dpath owner
+elif [ $# -eq 3 ] && [[ $1 =~ [0-9]{3} ]] && [ -d $2 ]; then
+    f_perm=$1
+    d_path=$2
+    owner=$3
+    if [ $1 = '000' ]; then
+        d_perm='000'
+    elif [ `expr $1 % 100` -eq 0 ]; then
+        d_perm=`expr $1 + 100`
+    elif [ `expr $1 % 10` -eq 0 ]; then
+        d_perm=`expr $1 + 110`
+    else
+        d_perm=`expr $1 + 111`
+    fi
+# perms owner dpath
+elif [ $# -eq 3 ] && [[ $1 =~ [0-9]{3} ]] && [ -d $3 ]; then
+    f_perm=$1
+    owner=$2
+    d_path=$3
+    if [ $1 = '000' ]; then
+        d_perm='000'
+    elif [ `expr $1 % 100` -eq 0 ]; then
+        d_perm=`expr $1 + 100`
+    elif [ `expr $1 % 10` -eq 0 ]; then
+        d_perm=`expr $1 + 110`
+    else
+        d_perm=`expr $1 + 111`
+    fi
+# dpath perms owner
+elif [ $# -eq 3 ] && [ -d $1 ] && [[ $2 =~ [0-9]{3} ]]; then
+    d_path=$1
+    f_perm=$2
+    owner=$3
+    if [ $2 = '000' ]; then
+        d_perm='000'
+    elif [ `expr $2 % 100` -eq 0 ]; then
+        d_perm=`expr $2 + 100`
+    elif [ `expr $2 % 10` -eq 0 ]; then
+        d_perm=`expr $2 + 110`
+    else
+        d_perm=`expr $2 + 111`
+    fi
+# fpath perms owner
+# dpath owner perms
+elif [ $# -eq 3 ] && [ -d $1 ] && [[ $3 =~ [0-9]{3} ]]; then
+    d_path=$1
+    owner=$2
+    f_perm=$3
+    if [ $3 = '000' ]; then
+        d_perm='000'
+    elif [ `expr $3 % 100` -eq 0 ]; then
+        d_perm=`expr $3 + 100`
+    elif [ `expr $3 % 10` -eq 0 ]; then
+        d_perm=`expr $3 + 110`
+    else
+        d_perm=`expr $3 + 111`
+    fi
+# owner perms dpath
+elif [ $# -eq 3 ] && [[ $2 =~ [0-9]{3} ]] && [ -d $3 ]; then
+    owner=$1
+    f_perm=$2
+    d_path=$3
+    if [ $2 = '000' ]; then
+        d_perm='000'
+    elif [ `expr $2 % 100` -eq 0 ]; then
+        d_perm=`expr $2 + 100`
+    elif [ `expr $2 % 10` -eq 0 ]; then
+        d_perm=`expr $2 + 110`
+    else
+        d_perm=`expr $2 + 111`
+    fi
+# owner dpath perms
+elif [ $# -eq 3 ] && [ -d $2 ] && [[ $3 =~ [0-9]{3} ]]; then
+    owner=$1
+    d_path=$2
+    f_perm=$3
+    if [ $3 = '000' ]; then
+        d_perm='000'
+    elif [ `expr $3 % 100` -eq 0 ]; then
+        d_perm=`expr $3 + 100`
+    elif [ `expr $3 % 10` -eq 0 ]; then
+        d_perm=`expr $3 + 110`
+    else
+        d_perm=`expr $3 + 111`
+    fi
+else
+    echo 'Invalid parameters: Usage(random order, at least 1 parameter): rch dir_path owner file_permission' >&2
+    exit 1
+fi
+
+chown -R ${owner} ${d_path}
+find ${d_path} -type d -print | xargs chmod ${d_perm}
+find ${d_path} -type f -print | xargs chmod ${f_perm}
